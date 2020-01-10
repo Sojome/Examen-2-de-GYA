@@ -46,6 +46,8 @@
         var hearts;
         var life = 3;
         var lifeText;
+        //Nuevas variable para la estrella verde
+        var startsgreen;
 
         var game = new Phaser.Game(config);
 
@@ -55,6 +57,7 @@
             this.load.image('ground', 'assets/platform.png');
             this.load.image('star', 'assets/star.png');
             this.load.image('bomb', 'assets/bomb.png');
+            this.load.image('startgreen', 'assets/startgreen.png');
             this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         }
 
@@ -124,6 +127,7 @@
 
             //Se crea un grupo
             hearts = this.physics.add.group();
+            startsgreen = this.physics.add.group();
 
             //  The score
             scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
@@ -133,7 +137,9 @@
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(stars, platforms);
             this.physics.add.collider(bombs, platforms);
+            //modificacion corazon
             this.physics.add.collider(hearts, platforms);
+            this.physics.add.collider(startsgreen, platforms);
 
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
             this.physics.add.overlap(player, stars, collectStar, null, this);
@@ -141,8 +147,9 @@
             this.physics.add.collider(player, bombs, hitBomb, null, this);
 
             //Añado condicion
-
             this.physics.add.collider(player, hearts, collectHeart, null, this);
+            this.physics.add.collider(player, startsgreen, collectGreen, null, this);
+
         }
 
         function update() {
@@ -200,6 +207,12 @@
                 heart.setCollideWorldBounds(true);
                 heart.setVelocity(Phaser.Math.Between(-200, 200), 20);
 
+                //crear Estrella verde
+                var startgreen = startsgreen.create(x, 16, 'startgreen');
+                startgreen.setBounce(1);
+                startgreen.setCollideWorldBounds(true);
+                startgreen.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
             }
         }
 
@@ -239,6 +252,15 @@
                 life++;
                 lifeText.setText('life: ' + life);
             }
+
+        }
+
+        function collectGreen(player, startgreen) {
+            startgreen.disableBody(true, true);
+
+            //score
+            score = score + 50;
+            scoreText.setText('score: ' + score);
 
         }
 
