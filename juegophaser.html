@@ -214,6 +214,10 @@
                 gameOver = true;
             }
             else {
+                //score
+                score = score - 50;
+                scoreText.setText('score: ' + score);
+                //Vida
                 life = life - 1;
                 if (life < 0) {
                     lifeText.setText('life: 0');
