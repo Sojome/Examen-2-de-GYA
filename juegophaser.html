@@ -141,14 +141,22 @@
             this.physics.add.collider(hearts, platforms);
             this.physics.add.collider(startsgreen, platforms);
 
+            //Para que los objetos
+            this.physics.add.collider(hearts, bombs);
+            this.physics.add.collider(hearts, hearts);
+            this.physics.add.collider(hearts, startsgreen);
+            this.physics.add.collider(bombs, bombs);
+            this.physics.add.collider(bombs, startsgreen);
+            this.physics.add.collider(startsgreen,startsgreen);
+
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
             this.physics.add.overlap(player, stars, collectStar, null, this);
 
             this.physics.add.collider(player, bombs, hitBomb, null, this);
 
             //Añado condicion
-            this.physics.add.collider(player, hearts, collectHeart, null, this);
-            this.physics.add.collider(player, startsgreen, collectGreen, null, this);
+            this.physics.add.overlap(player, hearts, collectHeart, null, this);
+            this.physics.add.overlap(player, startsgreen, collectGreen, null, this);
 
         }
 
