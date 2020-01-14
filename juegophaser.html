@@ -52,6 +52,9 @@
         var level = 1;
         var levelText;
         var i;
+        //Jugador dos
+        var player2;
+        var keys;
 
         var game = new Phaser.Game(config);
 
@@ -78,6 +81,11 @@
 
             // The player and its settings
             player = this.physics.add.sprite(100, 450, 'dude');
+
+            //Jugador 2
+            player2 = this.physics.add.sprite(200, 450, 'dude');
+            player2.setBounce(0.2);
+            player2.setCollideWorldBounds(true);
 
             //  Player physics properties. Give the little guy a slight bounce.
             player.setBounce(0.2);
@@ -106,6 +114,9 @@
 
             //  Input Events
             cursors = this.input.keyboard.createCursorKeys();
+
+            //Controles jugador 2
+            keys = this.input.keyboard.addKeys('A,W,S,D');
 
             //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
             stars = this.physics.add.group({
@@ -137,6 +148,7 @@
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(stars, platforms);
             this.physics.add.collider(bombs, platforms);
+
             //modificacion corazon
             this.physics.add.collider(hearts, platforms);
             this.physics.add.collider(startsgreen, platforms);
@@ -147,7 +159,8 @@
             this.physics.add.collider(hearts, startsgreen);
             this.physics.add.collider(bombs, bombs);
             this.physics.add.collider(bombs, startsgreen);
-            this.physics.add.collider(startsgreen,startsgreen);
+            this.physics.add.collider(startsgreen, startsgreen);
+            this.physics.add.overlap(player, player2);
 
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
             this.physics.add.overlap(player, stars, collectStar, null, this);
@@ -157,6 +170,17 @@
             //Añado condicion
             this.physics.add.overlap(player, hearts, collectHeart, null, this);
             this.physics.add.overlap(player, startsgreen, collectGreen, null, this);
+
+            //Jugador 2
+            this.physics.add.collider(player2, platforms);
+
+            this.physics.add.overlap(player2, stars, collectStar, null, this);
+
+            this.physics.add.collider(player2, bombs, hitBomb, null, this);
+
+            //Añado condicion
+            this.physics.add.overlap(player2, hearts, collectHeart, null, this);
+            this.physics.add.overlap(player2, startsgreen, collectGreen, null, this);
 
         }
 
@@ -183,6 +207,24 @@
 
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
+            }
+
+            //Jugador 2
+            if (keys.A.isDown) {
+                player2.setVelocityX(-160);
+                player2.anims.play('left', true);
+            }
+            else if (keys.D.isDown) {
+                player2.setVelocityX(160);
+                player2.anims.play('right', true);
+            }
+            else {
+                player2.setVelocityX(0);
+                player2.anims.play('turn');
+            }
+
+            if (keys.W.isDown && player2.body.touching.down) {
+                player2.setVelocityY(-330);
             }
         }
 
