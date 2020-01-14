@@ -55,6 +55,13 @@
         //Jugador dos
         var player2;
         var keys;
+        var score2 = 0;
+        var scoreText2;
+        var life2 = 3;
+        var lifeText2;
+
+        var vivo1 = 0;
+        var vivo2 = 0;
 
         var game = new Phaser.Game(config);
 
@@ -80,10 +87,10 @@
             platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
             // The player and its settings
-            player = this.physics.add.sprite(100, 450, 'dude');
+            player = this.physics.add.sprite(120, 450, 'dude');
 
             //Jugador 2
-            player2 = this.physics.add.sprite(200, 450, 'dude');
+            player2 = this.physics.add.sprite(600, 450, 'dude');
             player2.setBounce(0.2);
             player2.setCollideWorldBounds(true);
 
@@ -144,6 +151,14 @@
             lifeText = this.add.text(16, 40, 'life: 3', { fontSize: '32px', fill: '#000' });
             //Cantidad de niveles
             levelText = this.add.text(16, 64, 'level: 1', { fontSize: '32px', fill: '#000' });
+
+            //Jugador 2
+
+            //  The score
+            scoreText2 = this.add.text(500, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+            // cantidad de corazones
+            lifeText2 = this.add.text(500, 40, 'life: 3', { fontSize: '32px', fill: '#000' });
+
             //  Collide the player and the stars with the platforms
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(stars, platforms);
@@ -160,7 +175,7 @@
             this.physics.add.collider(bombs, bombs);
             this.physics.add.collider(bombs, startsgreen);
             this.physics.add.collider(startsgreen, startsgreen);
-            this.physics.add.overlap(player, player2);
+            this.physics.add.collider(player, player2);
 
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
             this.physics.add.overlap(player, stars, collectStar, null, this);
@@ -176,11 +191,11 @@
 
             this.physics.add.overlap(player2, stars, collectStar, null, this);
 
-            this.physics.add.collider(player2, bombs, hitBomb, null, this);
+            this.physics.add.collider(player2, bombs, hitBomb2, null, this);
 
             //Añado condicion
-            this.physics.add.overlap(player2, hearts, collectHeart, null, this);
-            this.physics.add.overlap(player2, startsgreen, collectGreen, null, this);
+            this.physics.add.overlap(player2, hearts, collectHeart2, null, this);
+            this.physics.add.overlap(player2, startsgreen, collectGreen2, null, this);
 
         }
 
@@ -234,7 +249,10 @@
             //  Add and update the score
             score += 10;
             scoreText.setText('score: ' + score);
+            llamada();            
+        }
 
+        function llamada(){
             if (stars.countActive(true) === 0) {
                 //  A new batch of stars to collect
                 stars.children.iterate(function (child) {
@@ -279,13 +297,20 @@
 
         function hitBomb(player, bomb) {
             if (life == 0) {
-                this.physics.pause();
 
-                player.setTint(0xff0000);
+                player.disableBody(true, true);
+                vivo1=1;
 
-                player.anims.play('turn');
+                if (vivo1 == 1 && vivo2 == 1) {
+                    this.physics.pause();
 
-                gameOver = true;
+                    //player.setTint(0xff0000);
+
+                    //player.anims.play('turn');
+
+                    gameOver = true;
+                }
+
             }
             else {
                 //score
@@ -327,6 +352,71 @@
         //Funcion randomica
         function getRndInteger(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        //Jugador 2 ------------------------------------------------
+
+        function collectStar2(player2, star) {
+            star.disableBody(true, true);
+
+            //  Add and update the score
+            score2 += 10;
+            scoreText2.setText('score: ' + score2);
+        }
+
+        function hitBomb2(player2, bomb) {
+            if (life2 == 0) {
+                vivo2=1;
+
+                player2.disableBody(true, true);
+
+                if (vivo1 == 1 && vivo2 == 1) {
+                    this.physics.pause();
+
+                    //player2.setTint(0xff0000);
+
+                    //player2.anims.play('turn');
+
+                    gameOver = true;
+                }
+
+            }
+            else {
+                //score2
+                score2 = score2 - 50;
+                scoreText2.setText('score2: ' + score2);
+                //Vida
+                life2 = life2 - 1;
+                if (life2 < 0) {
+                    lifeText2.setText('life2: 0');
+                }
+                else {
+                    lifeText2.setText('life2: ' + life2);
+                }
+            }
+        }
+
+        //funcion que ejecute los corazones
+
+        function collectHeart2(player2, heart) {
+            heart.disableBody(true, true);
+
+            //  Add and update the score2
+
+            if (life2 != 3) {
+                life2++;
+                lifeText2.setText('life2: ' + life2);
+            }
+
+        }
+
+        function collectGreen2(player2, startgreen) {
+            startgreen.disableBody(true, true);
+
+            //score2
+            score2 = score2 + 50;
+            scoreText2.setText('score2: ' + score2);
+
         }
 
     </script>
